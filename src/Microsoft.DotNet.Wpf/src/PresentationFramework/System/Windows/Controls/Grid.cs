@@ -77,10 +77,7 @@ namespace System.Windows.Controls
         /// </summary>
         void IAddChild.AddChild(object value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             UIElement cell = value as UIElement;
             if (cell != null)
@@ -89,7 +86,7 @@ namespace System.Windows.Controls
                 return;
             }
 
-            throw (new ArgumentException(SR.Get(SRID.Grid_UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value"));
+            throw (new ArgumentException(SR.Format(SR.Grid_UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value"));
         }
 
         /// <summary>
@@ -136,10 +133,7 @@ namespace System.Windows.Controls
         /// <param name="value">Column property value.</param>
         public static void SetColumn(UIElement element, int value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(ColumnProperty, value);
         }
@@ -152,10 +146,7 @@ namespace System.Windows.Controls
         [AttachedPropertyBrowsableForChildren()]
         public static int GetColumn(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((int)element.GetValue(ColumnProperty));
         }
@@ -167,10 +158,7 @@ namespace System.Windows.Controls
         /// <param name="value">Row property value.</param>
         public static void SetRow(UIElement element, int value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(RowProperty, value);
         }
@@ -183,10 +171,7 @@ namespace System.Windows.Controls
         [AttachedPropertyBrowsableForChildren()]
         public static int GetRow(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((int)element.GetValue(RowProperty));
         }
@@ -198,10 +183,7 @@ namespace System.Windows.Controls
         /// <param name="value">ColumnSpan property value.</param>
         public static void SetColumnSpan(UIElement element, int value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(ColumnSpanProperty, value);
         }
@@ -214,10 +196,7 @@ namespace System.Windows.Controls
         [AttachedPropertyBrowsableForChildren()]
         public static int GetColumnSpan(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((int)element.GetValue(ColumnSpanProperty));
         }
@@ -229,10 +208,7 @@ namespace System.Windows.Controls
         /// <param name="value">RowSpan property value.</param>
         public static void SetRowSpan(UIElement element, int value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(RowSpanProperty, value);
         }
@@ -245,10 +221,7 @@ namespace System.Windows.Controls
         [AttachedPropertyBrowsableForChildren()]
         public static int GetRowSpan(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((int)element.GetValue(RowSpanProperty));
         }
@@ -260,10 +233,7 @@ namespace System.Windows.Controls
         /// <param name="value">IsSharedSizeScope property value.</param>
         public static void SetIsSharedSizeScope(UIElement element, bool value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(IsSharedSizeScopeProperty, value);
         }
@@ -275,10 +245,7 @@ namespace System.Windows.Controls
         /// <returns>IsSharedSizeScope property value.</returns>
         public static bool GetIsSharedSizeScope(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((bool)element.GetValue(IsSharedSizeScopeProperty));
         }
@@ -359,7 +326,7 @@ namespace System.Windows.Controls
             {
                 if (_gridLinesRenderer == null)
                 {
-                    throw new ArgumentOutOfRangeException("index", index, SR.Get(SRID.Visual_ArgumentOutOfRange));
+                    throw new ArgumentOutOfRangeException("index", index, SR.Visual_ArgumentOutOfRange);
                 }
                 return _gridLinesRenderer;
             }
@@ -3964,12 +3931,12 @@ namespace System.Windows.Controls
                     if (_currentEnumerator == -1)
                     {
                         #pragma warning suppress 6503 // IEnumerator.Current is documented to throw this exception
-                        throw new InvalidOperationException(SR.Get(SRID.EnumeratorNotStarted));
+                        throw new InvalidOperationException(SR.EnumeratorNotStarted);
                     }
                     if (_currentEnumerator >= 3)
                     {
                         #pragma warning suppress 6503 // IEnumerator.Current is documented to throw this exception
-                        throw new InvalidOperationException(SR.Get(SRID.EnumeratorReachedEnd));
+                        throw new InvalidOperationException(SR.EnumeratorReachedEnd);
                     }
 
                     //  assert below is not true anymore since UIElementCollection allowes for null children

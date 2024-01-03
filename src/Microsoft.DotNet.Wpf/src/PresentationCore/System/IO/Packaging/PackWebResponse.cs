@@ -62,14 +62,11 @@ namespace System.IO.Packaging
         /// <remarks>intended for use only by PackWebRequest</remarks>
         internal PackWebResponse(Uri uri, Uri innerUri, Uri partName, WebRequest innerRequest)
         {
-            if (uri == null)
-                throw new ArgumentNullException("uri");
+            ArgumentNullException.ThrowIfNull(uri);
 
-            if (innerUri == null)
-                throw new ArgumentNullException("innerUri");
+            ArgumentNullException.ThrowIfNull(innerUri);
 
-            if (innerRequest == null)
-                throw new ArgumentNullException("innerRequest");
+            ArgumentNullException.ThrowIfNull(innerRequest);
 
             _lockObject = new Object();     // required for synchronization
 
@@ -133,17 +130,13 @@ namespace System.IO.Packaging
         {
             _lockObject = new Object();     // required for synchronization
 
-            if (uri == null)
-                throw new ArgumentNullException("uri");
+            ArgumentNullException.ThrowIfNull(uri);
 
-            if (innerUri == null)
-                throw new ArgumentNullException("innerUri");
+            ArgumentNullException.ThrowIfNull(innerUri);
 
-            if (partName == null)
-                throw new ArgumentNullException("partName");
+            ArgumentNullException.ThrowIfNull(partName);
 
-            if (cacheEntry == null)
-                throw new ArgumentNullException("cacheEntry");
+            ArgumentNullException.ThrowIfNull(cacheEntry);
 
 #if DEBUG
             if (PackWebRequestFactory._traceSwitch.Enabled)
@@ -247,7 +240,7 @@ namespace System.IO.Packaging
                     // open container on netStream
                     Package c = Package.Open(_responseStream);
                     if (!c.PartExists(_partName))
-                        throw new WebException(SR.Get(SRID.WebResponsePartNotFound));
+                        throw new WebException(SR.WebResponsePartNotFound);
 
                     PackagePart p = c.GetPart(_partName);
 
@@ -868,7 +861,7 @@ namespace System.IO.Packaging
             if (_responseError)
             {
                 if (_responseException == null)
-                    throw new WebException(SR.Get(SRID.WebResponseFailure));
+                    throw new WebException(SR.WebResponseFailure);
                 else
                     throw _responseException;   // throw literal exception if there is one
             }
@@ -906,7 +899,7 @@ namespace System.IO.Packaging
                         // create exception to be thrown on client thread, then unblock the caller
                         // thread will be discovered and re-thrown in WaitForResponse() method
                         _responseError = true;
-                        _responseException = new WebException(SR.Get(SRID.WebRequestTimeout, null), WebExceptionStatus.Timeout);
+                        _responseException = new WebException(SR.Format(SR.WebRequestTimeout, null), WebExceptionStatus.Timeout);
                     }
 #if DEBUG
                     else

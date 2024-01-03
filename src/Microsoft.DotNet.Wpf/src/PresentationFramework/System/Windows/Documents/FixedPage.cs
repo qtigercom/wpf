@@ -185,16 +185,13 @@ namespace System.Windows.Documents
         /// <ExternalAPI/>
         void IAddChild.AddChild (Object value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             UIElement uie = value as UIElement;
 
             if (uie == null)
             {
-                throw new ArgumentException(SR.Get(SRID.UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value");
+                throw new ArgumentException(SR.Format(SR.UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value");
             }
 
             Children.Add(uie);
@@ -225,7 +222,7 @@ namespace System.Windows.Documents
         [AttachedPropertyBrowsableForChildren()]
         public static double GetLeft(UIElement element)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             return (double)element.GetValue(LeftProperty);
         }
 
@@ -238,7 +235,7 @@ namespace System.Windows.Documents
         /// <seealso cref="Canvas.LeftProperty" />
         public static void SetLeft(UIElement element, double length)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             element.SetValue(LeftProperty, length);
         }
 
@@ -253,7 +250,7 @@ namespace System.Windows.Documents
         [AttachedPropertyBrowsableForChildren()]
         public static double GetTop(UIElement element)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             return (double)element.GetValue(TopProperty);
         }
 
@@ -266,7 +263,7 @@ namespace System.Windows.Documents
         /// <seealso cref="Canvas.TopProperty" />
         public static void SetTop(UIElement element, double length)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             element.SetValue(TopProperty, length);
         }
 
@@ -281,7 +278,7 @@ namespace System.Windows.Documents
         [AttachedPropertyBrowsableForChildren()]
         public static double GetRight(UIElement element)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             return (double)element.GetValue(RightProperty);
         }
 
@@ -294,7 +291,7 @@ namespace System.Windows.Documents
         /// <seealso cref="Canvas.RightProperty" />
         public static void SetRight(UIElement element, double length)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             element.SetValue(RightProperty, length);
         }
 
@@ -309,7 +306,7 @@ namespace System.Windows.Documents
         [AttachedPropertyBrowsableForChildren()]
         public static double GetBottom(UIElement element)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             return (double)element.GetValue(BottomProperty);
         }
 
@@ -322,7 +319,7 @@ namespace System.Windows.Documents
         /// <seealso cref="Canvas.BottomProperty" />
         public static void SetBottom(UIElement element, double length)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             element.SetValue(BottomProperty, length);
         }
 
@@ -334,7 +331,7 @@ namespace System.Windows.Documents
         [AttachedPropertyBrowsableForChildren()]
         public static Uri GetNavigateUri(UIElement element)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             return (Uri)element.GetValue(NavigateUriProperty);
         }
 
@@ -345,7 +342,7 @@ namespace System.Windows.Documents
         /// <remarks>Should be kept here for compatibility since the attached property has moved from FixedPage to Hyperlink.</remarks>
         public static void SetNavigateUri(UIElement element, Uri uri)
         {
-            if (element == null) { throw new ArgumentNullException("element"); }
+            ArgumentNullException.ThrowIfNull(element);
             element.SetValue(NavigateUriProperty, uri);
         }
 
@@ -714,7 +711,7 @@ namespace System.Windows.Documents
         {
             if (_uiElementCollection == null)
             {
-                throw new ArgumentOutOfRangeException("index", index, SR.Get(SRID.Visual_ArgumentOutOfRange));
+                throw new ArgumentOutOfRangeException("index", index, SR.Visual_ArgumentOutOfRange);
             }
             return _uiElementCollection[index];            
         }
@@ -1014,18 +1011,18 @@ namespace System.Windows.Documents
 
         internal int[] _CreateChildIndex(DependencyObject e)
         {
-            ArrayList childPath = new ArrayList();
+            List<int> childPath = new List<int>();
             while (e != this)
             {
                 DependencyObject parent = LogicalTreeHelper.GetParent(e);
                 int childIndex = -1;
-                if (parent is FixedPage)
+                if (parent is FixedPage parentFP)
                 {
-                    childIndex = ((FixedPage)parent).Children.IndexOf((UIElement)e);
+                    childIndex = parentFP.Children.IndexOf((UIElement)e);
                 }
-                else if (parent is Canvas)
+                else if (parent is Canvas parentC)
                 {
-                    childIndex = ((Canvas)parent).Children.IndexOf((UIElement)e);
+                    childIndex = parentC.Children.IndexOf((UIElement)e);
                 }
                 else
                 {
@@ -1049,7 +1046,7 @@ namespace System.Windows.Documents
             }
             while (e != this) ;
 
-            return (int[])childPath.ToArray(typeof(int));
+            return childPath.ToArray();
         }
 
         // Making this function private and only expose the versions

@@ -89,7 +89,7 @@ namespace System.Xaml.Schema
             {
                 throw new XamlSchemaException(SR.Format(SR.NoAddMethodFound, _xamlType, itemType));
             }
-            SafeReflectionInvoker.InvokeMethod(addMethod, instance, new object[] { item });
+            addMethod.Invoke(instance, new object[] { item });
         }
 
         public virtual void AddToDictionary(object instance, object key, object item)
@@ -121,7 +121,7 @@ namespace System.Xaml.Schema
             {
                 throw new XamlSchemaException(SR.Format(SR.NoAddMethodFound, _xamlType, itemType));
             }
-            SafeReflectionInvoker.InvokeMethod(addMethod, instance, new object[] { key, item });
+            addMethod.Invoke(instance, new object[] { key, item });
         }
 
         public virtual object CreateInstance(object[] arguments)
@@ -135,7 +135,7 @@ namespace System.Xaml.Schema
                     return result;
                 }
             }
-            return CreateInstanceWithActivator(_xamlType.UnderlyingType, arguments);
+            return Activator.CreateInstance(_xamlType.UnderlyingType, arguments);
         }
 
         public virtual MethodInfo GetAddMethod(XamlType contentType)
@@ -171,7 +171,9 @@ namespace System.Xaml.Schema
                         _xamlType.UnderlyingType, type.UnderlyingType);
                     if (addMethod != null)
                     {
-                        addMethods.Add(type, addMethod);
+                        // Use TryAdd as AllowedContentTypes can contain
+                        // duplicate types.
+                        addMethods.TryAdd(type, addMethod);
                     }
                 }
                 _addMethods = addMethods;
@@ -197,6 +199,11 @@ namespace System.Xaml.Schema
 
         public virtual MethodInfo GetEnumeratorMethod()
         {
+            if (IsUnknown)
+            {
+                return null;
+            }
+
             return _xamlType.GetEnumeratorMethod;
         }
 
@@ -214,7 +221,7 @@ namespace System.Xaml.Schema
                 throw new NotSupportedException(SR.OnlySupportedOnCollectionsAndDictionaries);
             }
             MethodInfo getEnumMethod = GetEnumeratorMethod();
-            return (IEnumerator)SafeReflectionInvoker.InvokeMethod(getEnumMethod, instance, s_emptyObjectArray);
+            return (IEnumerator)getEnumMethod.Invoke(instance, s_emptyObjectArray);
         }
 
         // vvvvv---- Unused members.  Servicing policy is to retain these anyway.  -----vvvvv
@@ -252,11 +259,6 @@ namespace System.Xaml.Schema
             get { return _xamlType == null || _xamlType.UnderlyingType == null; }
         }
 
-        private object CreateInstanceWithActivator(Type type, object[] arguments)
-        {
-            return SafeReflectionInvoker.CreateInstance(type, arguments);
-        }
-
         private void ThrowIfUnknown()
         {
             if (IsUnknown)
@@ -281,25 +283,19 @@ namespace System.Xaml.Schema
                 object inst = CallCtorDelegate(type);
                 return inst;
             }
-
-#if TARGETTING35SP1
-#else
-#endif
+#pragma warning disable SYSLIB0050
             private static object CallCtorDelegate(XamlTypeInvoker type)
             {
                 object inst = FormatterServices.GetUninitializedObject(type._xamlType.UnderlyingType);
                 InvokeDelegate(type._constructorDelegate, inst);
                 return inst;
             }
-
+#pragma warning restore SYSLIB0050
             private static void InvokeDelegate(Action<object> action, object argument)
             {
                 action.Invoke(argument);
             }
 
-#if TARGETTING35SP1
-#else
-#endif
             // returns true if a delegate is available, false if not
             private static bool EnsureConstructorDelegate(XamlTypeInvoker type)
             {
@@ -344,29 +340,6 @@ namespace System.Xaml.Schema
                     (Action<object>)s_actionCtor.Invoke(new object[] { null, constPtr });
                 type._constructorDelegate = ctorDelegate;
                 return true;
-            }
-        }
-
-        private class UnknownTypeInvoker : XamlTypeInvoker
-        {
-            public override void AddToCollection(object instance, object item)
-            {
-                throw new NotSupportedException(SR.NotSupportedOnUnknownType);
-            }
-
-            public override void AddToDictionary(object instance, object key, object item)
-            {
-                throw new NotSupportedException(SR.NotSupportedOnUnknownType);
-            }
-
-            public override object CreateInstance(object[] arguments)
-            {
-                throw new NotSupportedException(SR.NotSupportedOnUnknownType);
-            }
-
-            public override IEnumerator GetItems(object instance)
-            {
-                throw new NotSupportedException(SR.NotSupportedOnUnknownType);
             }
         }
     }

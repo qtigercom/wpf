@@ -15,7 +15,6 @@ using System.Windows.Input.StylusPlugIns;
 using System.Windows.Interop;
 using System.Windows.Media;
 using SR = MS.Internal.PresentationCore.SR;
-using SRID = MS.Internal.PresentationCore.SRID;
 
 namespace System.Windows.Input.StylusPointer
 {
@@ -575,7 +574,7 @@ namespace System.Windows.Input.StylusPointer
 
             if (doStylusCapture != null && !InputElement.IsValid(element))
             {
-                throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, doStylusCapture.GetType()));
+                throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, doStylusCapture.GetType()));
             }
 
             doStylusCapture?.VerifyAccess();
@@ -710,10 +709,7 @@ namespace System.Windows.Input.StylusPointer
         /// </summary>
         internal override StylusPointCollection GetStylusPoints(IInputElement relativeTo, StylusPointDescription subsetToReformatTo)
         {
-            if (null == subsetToReformatTo)
-            {
-                throw new ArgumentNullException("subsetToReformatTo");
-            }
+            ArgumentNullException.ThrowIfNull(subsetToReformatTo);
             // Fake up an empty one if we have to.
             if (_currentStylusPoints == null)
             {

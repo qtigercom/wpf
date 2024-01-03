@@ -115,7 +115,7 @@ namespace System.Windows.Xps.Serialization
             }
             else
             {
-                throw new XpsSerializationException(SR.Get(SRID.ReachSerialization_WrongPropertyTypeForFixedPage));
+                throw new XpsSerializationException(SR.ReachSerialization_WrongPropertyTypeForFixedPage);
             }
 
             EndPersistObjectData(needEndVisual, treeWalker);
@@ -127,10 +127,7 @@ namespace System.Windows.Xps.Serialization
         bool
         BeginPersistObjectData(SerializableObjectContext serializableObjectContext, out ReachTreeWalker treeWalker)
         {
-            if (serializableObjectContext == null)
-            {
-                throw new ArgumentNullException("serializableObjectContext");
-            }
+            ArgumentNullException.ThrowIfNull(serializableObjectContext);
 
             _xpsOMSerializationManager.RegisterPageStart();
 
@@ -265,10 +262,7 @@ namespace System.Windows.Xps.Serialization
             SerializablePropertyContext serializablePropertyContext
             )
         {
-            if (serializablePropertyContext == null)
-            {
-                throw new ArgumentNullException("serializablePropertyContext");
-            }
+            ArgumentNullException.ThrowIfNull(serializablePropertyContext);
 
             String attributeValue = String.Empty;
 
@@ -290,10 +284,7 @@ namespace System.Windows.Xps.Serialization
             SerializablePropertyContext serializablePropertyContext
             )
         {
-            if (serializablePropertyContext == null)
-            {
-                throw new ArgumentNullException("serializablePropertyContext");
-            }
+            ArgumentNullException.ThrowIfNull(serializablePropertyContext);
 
             String valueAsString = null;
             Object targetObjectContainingProperty = serializablePropertyContext.TargetObject;
@@ -374,7 +365,7 @@ namespace System.Windows.Xps.Serialization
             }
             else
             {
-                throw new XpsSerializationException(SR.Get(SRID.ReachSerialization_NoSerializer));
+                throw new XpsSerializationException(SR.ReachSerialization_NoSerializer);
             }
 
             return needEndVisual;

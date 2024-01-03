@@ -16,7 +16,6 @@ using System.Windows.Markup;
 using MS.Internal.PresentationCore;
 
 using SR = MS.Internal.PresentationCore.SR;
-using SRID = MS.Internal.PresentationCore.SRID;
 
 namespace System.Windows.Input
 {
@@ -56,20 +55,14 @@ namespace System.Windows.Input
         /// <param name="inputGestures">Default Input Gestures associated</param>
         public RoutedCommand(string name, Type ownerType, InputGestureCollection inputGestures)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name");
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             if (name.Length == 0)
             {
-                throw new ArgumentException(SR.Get(SRID.StringEmpty), "name");
+                throw new ArgumentException(SR.StringEmpty, "name");
             }
 
-            if (ownerType == null)
-            {
-                throw new ArgumentNullException("ownerType");
-            }
+            ArgumentNullException.ThrowIfNull(ownerType);
 
             _name = name;
             _ownerType = ownerType;
@@ -138,7 +131,7 @@ namespace System.Windows.Input
             // We only support UIElement, ContentElement and UIElement3D
             if ((target != null) && !InputElement.IsValid(target))
             {
-                throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, target.GetType()));
+                throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, target.GetType()));
             }
 
             if (target == null)
@@ -174,7 +167,7 @@ namespace System.Windows.Input
             // We only support UIElement, ContentElement and UIElement3D
             if ((target != null) && !InputElement.IsValid(target))
             {
-                throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, target.GetType()));
+                throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, target.GetType()));
             }
 
             if (target == null)

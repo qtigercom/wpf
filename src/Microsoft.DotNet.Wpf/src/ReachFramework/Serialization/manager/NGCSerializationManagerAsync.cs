@@ -50,10 +50,7 @@ namespace System.Windows.Xps.Serialization
             ):
         base()
         {
-            if (queue == null)
-            {
-                throw new ArgumentNullException("queue");
-            }
+            ArgumentNullException.ThrowIfNull(queue);
             _printQueue                      = queue;
             _operationStack                  = new Stack();
             _isBatchMode                     = isBatchMode;
@@ -82,14 +79,11 @@ namespace System.Windows.Xps.Serialization
             Object  serializedObject
             )
         {
-            if (serializedObject == null)
-            {
-                throw new ArgumentNullException("serializedObject");
-            }
+            ArgumentNullException.ThrowIfNull(serializedObject);
 
-            if(!IsSerializedObjectTypeSupported(serializedObject))
+            if (!IsSerializedObjectTypeSupported(serializedObject))
             {
-                throw new XpsSerializationException(SR.Get(SRID.ReachSerialization_NotSupported));
+                throw new XpsSerializationException(SR.ReachSerialization_NotSupported);
             }
 
             if(_isBatchMode && !_isSimulating)
@@ -143,7 +137,7 @@ namespace System.Windows.Xps.Serialization
                 }
                 else
                 {
-                    throw new XpsSerializationException(SR.Get(SRID.ReachSerialization_NoSerializer));
+                    throw new XpsSerializationException(SR.ReachSerialization_NoSerializer);
                 }
             }
         }
@@ -275,7 +269,7 @@ namespace System.Windows.Xps.Serialization
                             }
                             else
                             {
-                                throw new XpsSerializationException(SR.Get(SRID.ReachSerialization_NoSerializer));
+                                throw new XpsSerializationException(SR.ReachSerialization_NoSerializer);
                             }
                             _isBatchWorkItemInProgress = true;
                         }
@@ -734,7 +728,7 @@ namespace System.Windows.Xps.Serialization
                 _device.EndDocument(abort);
 
                 //
-                // Inform the listener that the doucment has been printed
+                // Inform the listener that the document has been printed
                 //
                 XpsSerializationProgressChangedEventArgs e =
                 new XpsSerializationProgressChangedEventArgs(XpsWritingProgressChangeLevel.FixedDocumentWritingProgress,

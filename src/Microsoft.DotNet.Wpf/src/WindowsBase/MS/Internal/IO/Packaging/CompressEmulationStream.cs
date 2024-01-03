@@ -259,11 +259,9 @@ namespace MS.Internal.IO.Packaging
         /// another wrapper Stream class.</remarks>
         internal CompressEmulationStream(Stream baseStream, Stream tempStream, long position, IDeflateTransform transformer)
         {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException("position");
-        
-            if (baseStream == null)
-                throw new ArgumentNullException("baseStream");
+            ArgumentOutOfRangeException.ThrowIfNegative(position);
+
+            ArgumentNullException.ThrowIfNull(baseStream);
 
             // seek and read required for emulation
             if (!baseStream.CanSeek)
@@ -272,11 +270,8 @@ namespace MS.Internal.IO.Packaging
             if (!baseStream.CanRead)
                 throw new InvalidOperationException(SR.ReadNotSupported);
 
-            if (tempStream == null)
-                throw new ArgumentNullException("tempStream");
-
-            if (transformer == null)
-                throw new ArgumentNullException("transformer");
+            ArgumentNullException.ThrowIfNull(tempStream);
+            ArgumentNullException.ThrowIfNull(transformer);
 
             _baseStream = baseStream;
             _tempStream = tempStream;

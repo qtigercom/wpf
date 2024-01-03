@@ -16,7 +16,6 @@ using System.Diagnostics;
 using System.Windows.Automation;
 
 using SR=MS.Internal.PresentationCore.SR;
-using SRID=MS.Internal.PresentationCore.SRID;
 
 namespace System.Windows.Input
 {
@@ -154,7 +153,7 @@ namespace System.Windows.Input
             // thread is not STA.
             if(Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
             {
-                throw new InvalidOperationException(SR.Get(SRID.RequiresSTA));
+                throw new InvalidOperationException(SR.RequiresSTA);
             }
 
             _stagingArea = new Stack();
@@ -339,10 +338,7 @@ namespace System.Windows.Input
         ///</summary>
         public void PushMenuMode(PresentationSource menuSite)
         {
-            if (menuSite == null)
-            {
-                throw new ArgumentNullException("menuSite");
-            }
+            ArgumentNullException.ThrowIfNull(menuSite);
             menuSite.VerifyAccess();
 
             menuSite.PushMenuMode();
@@ -363,10 +359,7 @@ namespace System.Windows.Input
         ///</summary>
         public void PopMenuMode(PresentationSource menuSite)
         {
-            if (menuSite == null)
-            {
-                throw new ArgumentNullException("menuSite");
-            }
+            ArgumentNullException.ThrowIfNull(menuSite);
             menuSite.VerifyAccess();
 
             if (_menuModeCount <= 0)
@@ -529,12 +522,9 @@ namespace System.Windows.Input
         /// </returns>
         public bool ProcessInput(InputEventArgs input)
         {
-//             VerifyAccess();
+            //             VerifyAccess();
 
-            if(input == null)
-            {
-                throw new ArgumentNullException("input");
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             // Push a marker indicating the portion of the staging area
             // that needs to be processed.

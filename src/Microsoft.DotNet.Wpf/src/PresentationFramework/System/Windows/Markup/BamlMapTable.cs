@@ -424,7 +424,7 @@ namespace System.Windows.Markup
 
                     if (null == type)
                     {
-                        ThrowException(SRID.ParserFailFindType, typeInfo.TypeFullName);
+                        ThrowException(nameof(SR.ParserFailFindType), typeInfo.TypeFullName);
                     }
                 }
             }
@@ -598,7 +598,7 @@ namespace System.Windows.Markup
 
                     if (tc == null)
                     {
-                        ThrowException(SRID.ParserNoTypeConv, propType.Name);
+                        ThrowException(nameof(SR.ParserNoTypeConv), propType.Name);
                     }
                     else
                     {
@@ -700,12 +700,12 @@ namespace System.Windows.Markup
                 KnownProperties knownId = (KnownProperties)(-id);
                 string propertyName = GetAttributeNameFromKnownId(knownId);
                 KnownElements knownElement = KnownTypes.GetKnownElementFromKnownCommonProperty(knownId);
-                return  (ownerTypeId == -(short)knownElement && (String.CompareOrdinal(propertyName, name) == 0));
+                return  (ownerTypeId == -(short)knownElement && (string.Equals(propertyName, name, StringComparison.Ordinal)));
             }
             else
             {
                 BamlAttributeInfoRecord record = (BamlAttributeInfoRecord)AttributeIdMap[id];
-                return (record.OwnerTypeId == ownerTypeId) && (String.CompareOrdinal(record.Name, name) == 0);
+                return (record.OwnerTypeId == ownerTypeId) && (string.Equals(record.Name, name, StringComparison.Ordinal));
             }
         }
 
@@ -714,7 +714,7 @@ namespace System.Windows.Markup
             string propertyName = GetAttributeNameFromId(id);
             if (null == propertyName)
                 return false;
-            return (String.CompareOrdinal(propertyName, name) == 0);
+            return (string.Equals(propertyName, name, StringComparison.Ordinal));
         }
 
         internal bool DoesAttributeMatch(short id, BamlAttributeUsage attributeUsage)
@@ -842,7 +842,7 @@ namespace System.Windows.Markup
                     propName = attributeInfo.OwnerType.FullName + "." + attributeInfo.Name;
                 }
 
-                ThrowException(SRID.ParserNoPropType, propName);
+                ThrowException(nameof(SR.ParserNoPropType), propName);
             }
             else
             {
@@ -1633,7 +1633,7 @@ namespace System.Windows.Markup
         void ThrowException(string id, string parameter)
         {
             ApplicationException bamlException = new ApplicationException(
-                                                     SR.Get(id, parameter));
+                                                     SR.Format(SR.GetResourceString(id), parameter));
             throw bamlException;
         }
 

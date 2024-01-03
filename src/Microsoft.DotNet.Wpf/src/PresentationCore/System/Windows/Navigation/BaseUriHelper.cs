@@ -291,7 +291,7 @@ namespace System.Windows.Navigation
 
                 if ((count > 4) || (count < 2))
                 {
-                    throw new UriFormatException(SR.Get(SRID.WrongFirstSegment));
+                    throw new UriFormatException(SR.WrongFirstSegment);
                 }
 
                 //
@@ -312,7 +312,7 @@ namespace System.Windows.Navigation
                         }
                         else
                         {
-                            throw new UriFormatException(SR.Get(SRID.WrongFirstSegment));
+                            throw new UriFormatException(SR.WrongFirstSegment);
                         }
                     }
                     else
@@ -323,7 +323,7 @@ namespace System.Windows.Navigation
                         }
                         else
                         {
-                            throw new UriFormatException(SR.Get(SRID.WrongFirstSegment));
+                            throw new UriFormatException(SR.WrongFirstSegment);
                         }
                     }
                 } // end of for loop
@@ -392,7 +392,7 @@ namespace System.Windows.Navigation
             }
             else
             {
-               throw new InvalidOperationException(SR.Get(SRID.CannotNavigateToApplicationResourcesInWebBrowser, packUri));
+               throw new InvalidOperationException(SR.Format(SR.CannotNavigateToApplicationResourcesInWebBrowser, packUri));
             }
         }
 
@@ -550,16 +550,13 @@ namespace System.Windows.Navigation
             Uri baseUri = null;
             DependencyObject doCurrent;
 
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
-                //
-                // Search the tree to find the closest parent which implements
-                // IUriContext or have set value for BaseUri property.
-                //
-                doCurrent = element;
+            //
+            // Search the tree to find the closest parent which implements
+            // IUriContext or have set value for BaseUri property.
+            //
+            doCurrent = element;
 
                 while (doCurrent != null)
                 {

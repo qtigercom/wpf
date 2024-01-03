@@ -122,8 +122,12 @@ namespace Microsoft.Build.Tasks.Windows
                 XmlDocument xmlProjectDoc = null;
 
                 xmlProjectDoc = new XmlDocument( );
-                xmlProjectDoc.Load(CurrentProject);
-
+                //Bugfix for GB chars, exception thrown when using Load(CurrentProject), when project name has GB characters in it.
+                //Using a filestream instead of using string path to avoid the need to properly compose Uri (which is another way of fixing - but more complicated).
+                using(FileStream fs = File.OpenRead(CurrentProject))
+                {
+                    xmlProjectDoc.Load(fs);
+                }
                 //
                 // remove all the WinFX specific item lists
                 // ApplicationDefinition, Page, MarkupResource and Resource
@@ -179,7 +183,7 @@ namespace Microsoft.Build.Tasks.Windows
 
                 globalProperties[assemblyNamePropertyName] = AssemblyName;
                 globalProperties[targetAssemblyProjectNamePropertyName] = currentProjectName;
-
+                globalProperties["EmbedUntrackedSources"] = "false";
                 Dictionary<string, ITaskItem[]> targetOutputs = new Dictionary<string, ITaskItem[]>();
                 retValue = BuildEngine.BuildProjectFile(tempProj, new string[] { CompileTargetName }, globalProperties, targetOutputs);
 
@@ -247,8 +251,12 @@ namespace Microsoft.Build.Tasks.Windows
                 XmlDocument xmlProjectDoc = null;
 
                 xmlProjectDoc = new XmlDocument( );
-                xmlProjectDoc.Load(CurrentProject);
-
+                //Bugfix for GB chars, exception thrown when using Load(CurrentProject), when project name has GB characters in it.
+                //Using a filestream instead of using string path to avoid the need to properly compose Uri (which is another way of fixing - but more complicated).
+                using(FileStream fs = File.OpenRead(CurrentProject))
+                {
+                    xmlProjectDoc.Load(fs);
+                }
                 // remove all the WinFX specific item lists
                 // ApplicationDefinition, Page, MarkupResource and Resource
                 RemoveItemsByName(xmlProjectDoc, APPDEFNAME);
@@ -277,7 +285,11 @@ namespace Microsoft.Build.Tasks.Windows
                     ( nameof(BaseIntermediateOutputPath), BaseIntermediateOutputPath ),
                     ( nameof(MSBuildProjectExtensionsPath), MSBuildProjectExtensionsPath ),
                     ( "_TargetAssemblyProjectName", Path.GetFileNameWithoutExtension(CurrentProject) ),
+                    ( nameof(RootNamespace), RootNamespace ),
                 };
+
+                //Removing duplicate AssemblyName
+                RemovePropertiesByName(xmlProjectDoc, nameof(AssemblyName));
 
                 AddNewProperties(xmlProjectDoc, properties);
 
@@ -498,6 +510,14 @@ namespace Microsoft.Build.Tasks.Windows
         public string AnalyzerTypeName { get; set; }
 
         /// <summary>
+        /// RootNamespace 
+        /// 
+        /// Required for Source Generator support. May be null.
+        /// 
+        /// </summary>
+        public string RootNamespace { get; set; }
+
+        /// <summary>
         /// BaseIntermediateOutputPath
         /// 
         /// Required for Source Generator support. May be null.
@@ -568,10 +588,11 @@ namespace Microsoft.Build.Tasks.Windows
         #region Private Methods
 
         //
-        // Remove specific items from project file. Every item should be under an ItemGroup.
+        // Remove specific entity from project file.
         //
-        private void RemoveItemsByName(XmlDocument xmlProjectDoc, string sItemName)
+        private void RemoveEntityByName(XmlDocument xmlProjectDoc, string sItemName, string groupName)
         {
+            
             if (xmlProjectDoc == null || String.IsNullOrEmpty(sItemName))
             {
                 // When the parameters are not valid, simply return it, instead of throwing exceptions.
@@ -617,7 +638,7 @@ namespace Microsoft.Build.Tasks.Windows
             {
                 XmlElement nodeGroup = root.ChildNodes[i] as XmlElement;
 
-                if (nodeGroup != null && String.Compare(nodeGroup.Name, ITEMGROUP_NAME, StringComparison.OrdinalIgnoreCase) == 0)
+                if (nodeGroup != null && String.Compare(nodeGroup.Name, groupName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     //
                     // This is ItemGroup element.
@@ -668,7 +689,22 @@ namespace Microsoft.Build.Tasks.Windows
                 }
 
             }   // end of "for i" statement.
+        }
+        
+        //
+        // Remove specific items from project file. Every item should be under an ItemGroup.
+        //
+        private void RemoveItemsByName(XmlDocument xmlProjectDoc, string sItemName)
+        {
+            RemoveEntityByName(xmlProjectDoc, sItemName, ITEMGROUP_NAME);
+        }
 
+        //
+        // Remove specific property from project file. Every property should be under an PropertyGroup.
+        //
+        private void RemovePropertiesByName(XmlDocument xmlProjectDoc, string sPropertyName)
+        {
+            RemoveEntityByName(xmlProjectDoc, sPropertyName, PROPERTYGROUP_NAME);
         }
 
         //
@@ -911,6 +947,7 @@ namespace Microsoft.Build.Tasks.Windows
         private const string RESOURCENAME = "Resource";
 
         private const string ITEMGROUP_NAME = "ItemGroup";
+        private const string PROPERTYGROUP_NAME = "PropertyGroup";
         private const string INCLUDE_ATTR_NAME = "Include";
 
         private const string WPFTMP = "wpftmp";

@@ -18,7 +18,6 @@ using MS.Internal.Media;
 using MS.Internal.PresentationCore;
 
 using SR=MS.Internal.PresentationCore.SR;
-using SRID=MS.Internal.PresentationCore.SRID;
 
 namespace System.Windows.Media
 {
@@ -37,10 +36,7 @@ namespace System.Windows.Media
     {
         private static void CheckVisualReferenceArgument(DependencyObject reference)
         {
-            if (reference == null)
-            {
-                throw new ArgumentNullException("reference");
-            }
+            ArgumentNullException.ThrowIfNull(reference);
         }
 
         /// <summary>
@@ -236,14 +232,8 @@ namespace System.Windows.Media
         // of the given type
         internal static bool IsAncestorOf(DependencyObject ancestor, DependencyObject descendant, Type stopType)
         {
-            if (ancestor == null)
-            {
-                throw new ArgumentNullException("ancestor");
-            }
-            if (descendant == null)
-            {
-                throw new ArgumentNullException("descendant");
-            }
+            ArgumentNullException.ThrowIfNull(ancestor);
+            ArgumentNullException.ThrowIfNull(descendant);
 
             VisualTreeUtils.EnsureVisual(ancestor);
             VisualTreeUtils.EnsureVisual(descendant);

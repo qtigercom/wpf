@@ -23,7 +23,6 @@ using MS.Internal;
 using MS.Internal.Shaping;
 
 using SR = MS.Internal.PresentationCore.SR;
-using SRID = MS.Internal.PresentationCore.SRID;
 
 
 namespace MS.Internal.TextFormatting
@@ -320,7 +319,7 @@ namespace MS.Internal.TextFormatting
                     else
                     {
                         // throw with LS error codes
-                        TextFormatterContext.ThrowExceptionFromLsError(SR.Get(SRID.CreateLineFailure, lserr), lserr);
+                        TextFormatterContext.ThrowExceptionFromLsError(SR.Format(SR.CreateLineFailure, lserr), lserr);
                     }
                 }
 
@@ -547,14 +546,11 @@ namespace MS.Internal.TextFormatting
                 InvertAxes          inversion
                 )
             {
-                if (drawingContext == null)
-                {
-                    throw new ArgumentNullException("drawingContext");
-                }
+                ArgumentNullException.ThrowIfNull(drawingContext);
 
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 MatrixTransform antiInversion = TextFormatterImp.CreateAntiInversionTransform(
@@ -642,7 +638,7 @@ namespace MS.Internal.TextFormatting
                         else
                         {
                             // throw with LS error codes
-                            TextFormatterContext.ThrowExceptionFromLsError(SR.Get(SRID.CreateLineFailure, lserr), lserr);
+                            TextFormatterContext.ThrowExceptionFromLsError(SR.Format(SR.CreateLineFailure, lserr), lserr);
                         }
                     }
 
@@ -715,7 +711,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 if (    !HasOverflowed
@@ -829,7 +825,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 if (_collapsedRange == null)
@@ -853,7 +849,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 return CharacterHitFromDistance(ParagraphUToLSLineU(TextFormatterImp.RealToIdeal(distance)));
@@ -986,7 +982,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 TextFormatterImp.VerifyCaretCharacterHit(characterHit, _cpFirst, _metrics._cchLength);
@@ -1146,7 +1142,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 TextFormatterImp.VerifyCaretCharacterHit(characterHit, _cpFirst, _metrics._cchLength);
@@ -1239,7 +1235,7 @@ namespace MS.Internal.TextFormatting
 
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 TextFormatterImp.VerifyCaretCharacterHit(characterHit, _cpFirst, _metrics._cchLength);
@@ -1499,15 +1495,12 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
-                if(textLength == 0)
-                {
-                    throw new ArgumentOutOfRangeException("textLength", SR.Get(SRID.ParameterMustBeGreaterThanZero));
-                }
+                ArgumentOutOfRangeException.ThrowIfZero(textLength);
 
-                if(textLength < 0)
+                if (textLength < 0)
                 {
                     firstTextSourceCharacterIndex += textLength;
                     textLength = -textLength;
@@ -2071,7 +2064,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 if (_plsrunVector == null)
@@ -2131,7 +2124,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 IEnumerable<IndexedGlyphRun> result = null;
@@ -2176,7 +2169,7 @@ namespace MS.Internal.TextFormatting
                         else
                         {
                             // throw with LS error codes
-                            TextFormatterContext.ThrowExceptionFromLsError(SR.Get(SRID.EnumLineFailure, lserr), lserr);
+                            TextFormatterContext.ThrowExceptionFromLsError(SR.Format(SR.EnumLineFailure, lserr), lserr);
                         }
                     }
                 }
@@ -2195,7 +2188,7 @@ namespace MS.Internal.TextFormatting
             {
                 if ((_statusFlags & StatusFlags.IsDisposed) != 0)
                 {
-                    throw new ObjectDisposedException(SR.Get(SRID.TextLineHasBeenDisposed));
+                    throw new ObjectDisposedException(SR.TextLineHasBeenDisposed);
                 }
 
                 if ((_statusFlags & StatusFlags.HasCollapsed) != 0)
@@ -2481,7 +2474,7 @@ namespace MS.Internal.TextFormatting
 
                 if(lserr != LsErr.None)
                 {
-                    TextFormatterContext.ThrowExceptionFromLsError(SR.Get(SRID.QueryLineFailure, lserr), lserr);
+                    TextFormatterContext.ThrowExceptionFromLsError(SR.Format(SR.QueryLineFailure, lserr), lserr);
                 }
 
                 if (lsTextCell.lscpEndCell < lsTextCell.lscpStartCell)
@@ -2538,7 +2531,7 @@ namespace MS.Internal.TextFormatting
 
                 if(lserr != LsErr.None)
                 {
-                    TextFormatterContext.ThrowExceptionFromLsError(SR.Get(SRID.QueryLineFailure, lserr), lserr);
+                    TextFormatterContext.ThrowExceptionFromLsError(SR.Format(SR.QueryLineFailure, lserr), lserr);
                 }
 
                 if (lsTextCell.lscpEndCell < lsTextCell.lscpStartCell)

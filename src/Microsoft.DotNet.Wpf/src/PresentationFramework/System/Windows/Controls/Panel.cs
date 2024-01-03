@@ -86,20 +86,17 @@ namespace System.Windows.Controls
         /// <ExternalAPI/>
         void IAddChild.AddChild (Object value)
         {
-            if (value == null)
+            ArgumentNullException.ThrowIfNull(value);
+            if (IsItemsHost)
             {
-                throw new ArgumentNullException("value");
-            }
-            if(IsItemsHost)
-            {
-                throw new InvalidOperationException(SR.Get(SRID.Panel_BoundPanel_NoChildren));
+                throw new InvalidOperationException(SR.Panel_BoundPanel_NoChildren);
             }
 
             UIElement uie = value as UIElement;
 
             if (uie == null)
             {
-                throw new ArgumentException(SR.Get(SRID.UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value");
+                throw new ArgumentException(SR.Format(SR.UnexpectedParameterType, value.GetType(), typeof(UIElement)), "value");
             }
 
             Children.Add(uie);
@@ -383,7 +380,7 @@ namespace System.Windows.Controls
         {
             if (_uiElementCollection == null)
             {
-                throw new ArgumentOutOfRangeException("index", index, SR.Get(SRID.Visual_ArgumentOutOfRange));
+                throw new ArgumentOutOfRangeException("index", index, SR.Visual_ArgumentOutOfRange);
             }
 
             if (IsZStateDirty) { RecomputeZState(); }
@@ -582,7 +579,7 @@ namespace System.Windows.Controls
             if (itemsOwner == null)
             {
                 // This can happen if IsItemsHost=true, but the panel is not nested in an ItemsControl
-                throw new InvalidOperationException(SR.Get(SRID.Panel_ItemsControlNotFound));
+                throw new InvalidOperationException(SR.Panel_ItemsControlNotFound);
             }
 
             IItemContainerGenerator itemsOwnerGenerator = itemsOwner.ItemContainerGenerator;
@@ -924,10 +921,7 @@ namespace System.Windows.Controls
         /// <param name="value">ZIndex property value.</param>
         public static void SetZIndex(UIElement element, int value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             element.SetValue(ZIndexProperty, value);
         }
@@ -939,10 +933,7 @@ namespace System.Windows.Controls
         /// <returns>ZIndex property value.</returns>
         public static int GetZIndex(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             return ((int)element.GetValue(ZIndexProperty));
         }

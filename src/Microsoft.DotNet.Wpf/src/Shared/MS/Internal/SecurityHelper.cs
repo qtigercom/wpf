@@ -111,7 +111,7 @@ internal static class SecurityHelper
               //
               if (targetZone < 0)
               {
-                throw new SecurityException( SR.Get(SRID.Invalid_URI) );
+                throw new SecurityException( SR.Invalid_URI );
               }
               pSec = null;
               curSecMgr = null;
@@ -158,10 +158,7 @@ internal static class SecurityHelper
         
         internal static int GetHRForException(Exception exception)
         {
-            if (exception == null)
-            {
-                throw new ArgumentNullException("exception");
-            }
+            ArgumentNullException.ThrowIfNull(exception);
 
             // GetHRForException fills a per thread IErrorInfo object with data from the exception
             // The exception may contain security sensitive data like full file paths that we do not

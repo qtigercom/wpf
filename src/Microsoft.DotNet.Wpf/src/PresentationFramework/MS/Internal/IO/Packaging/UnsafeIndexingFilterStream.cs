@@ -62,8 +62,7 @@ namespace MS.Internal.IO.Packaging
         /// </remarks>
         internal UnsafeIndexingFilterStream(IStream oleStream)
         {
-            if (oleStream == null)
-                throw new ArgumentNullException("oleStream");
+            ArgumentNullException.ThrowIfNull(oleStream);
 
             _oleStream = oleStream;
             _disposed = false;
@@ -155,7 +154,7 @@ namespace MS.Internal.IO.Packaging
         public override void SetLength(long newLength)
         {
             ThrowIfStreamDisposed();
-            throw new NotSupportedException(SR.Get(SRID.StreamDoesNotSupportWrite));
+            throw new NotSupportedException(SR.StreamDoesNotSupportWrite);
         }
 
         /// <summary>
@@ -168,7 +167,7 @@ namespace MS.Internal.IO.Packaging
         public override void Write(byte[] buf, int offset, int count)
         {
             ThrowIfStreamDisposed();
-            throw new NotSupportedException(SR.Get(SRID.StreamDoesNotSupportWrite));
+            throw new NotSupportedException(SR.StreamDoesNotSupportWrite);
         }
 
         /// <summary>
@@ -241,7 +240,7 @@ namespace MS.Internal.IO.Packaging
                 ThrowIfStreamDisposed();
 
                 if (value < 0)
-                    throw new ArgumentException(SR.Get(SRID.CannotSetNegativePosition));
+                    throw new ArgumentException(SR.CannotSetNegativePosition);
 
                 Seek(value, SeekOrigin.Begin);
             }
@@ -307,7 +306,7 @@ namespace MS.Internal.IO.Packaging
         private void ThrowIfStreamDisposed()
         {
             if (_disposed)
-                throw new ObjectDisposedException(null, SR.Get(SRID.StreamObjectDisposed));
+                throw new ObjectDisposedException(null, SR.StreamObjectDisposed);
         }
 
         //------------------------------------------------------

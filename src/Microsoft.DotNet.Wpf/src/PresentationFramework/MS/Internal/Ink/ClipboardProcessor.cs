@@ -56,10 +56,7 @@ namespace MS.Internal.Ink
 
         internal ClipboardProcessor(InkCanvas inkCanvas)
         {
-            if ( inkCanvas == null )
-            {
-                throw new ArgumentNullException("inkCanvas");
-            }
+            ArgumentNullException.ThrowIfNull(inkCanvas);
 
             _inkCanvas = inkCanvas;
 
@@ -290,7 +287,7 @@ namespace MS.Internal.Ink
                                 clipboardData = new TextClipboardData();
                                 break;
                             default:
-                                throw new ArgumentException(SR.Get(SRID.InvalidClipboardFormat), "value");
+                                throw new ArgumentException(SR.InvalidClipboardFormat, "value");
                         }
 
                         preferredData.Add(format, clipboardData);

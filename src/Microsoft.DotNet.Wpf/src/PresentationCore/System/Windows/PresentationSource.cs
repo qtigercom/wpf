@@ -19,7 +19,6 @@ using MS.Internal;
 using MS.Internal.PresentationCore;                        // SecurityHelper
 
 using SR=MS.Internal.PresentationCore.SR;
-using SRID=MS.Internal.PresentationCore.SRID;
 
 namespace System.Windows
 {
@@ -124,15 +123,12 @@ namespace System.Windows
         /// </remarks>
         public static void AddSourceChangedHandler(IInputElement element, SourceChangedEventHandler handler)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             // Either UIElement, ContentElement or UIElement3D.
             if (!InputElement.IsValid(element))
             {
-                throw new ArgumentException(SR.Get(SRID.Invalid_IInputElement, element.GetType()), nameof(element));
+                throw new ArgumentException(SR.Format(SR.Invalid_IInputElement, element.GetType()), nameof(element));
             }
             DependencyObject o = (DependencyObject)element;
 
@@ -176,7 +172,7 @@ namespace System.Windows
                 }
                 else
                 {
-                    throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, o.GetType())); 
+                    throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, o.GetType())); 
                 }
             }
         }
@@ -193,15 +189,12 @@ namespace System.Windows
         /// </remarks>
         public static void RemoveSourceChangedHandler(IInputElement e, SourceChangedEventHandler handler)
         {
-            if (e == null)
-            {
-                throw new ArgumentNullException("e");
-            }
+            ArgumentNullException.ThrowIfNull(e);
 
             // Either UIElement, ContentElement or UIElement3D.
             if (!InputElement.IsValid(e))
             {
-                throw new ArgumentException(SR.Get(SRID.Invalid_IInputElement, e.GetType()), nameof(e));
+                throw new ArgumentException(SR.Format(SR.Invalid_IInputElement, e.GetType()), nameof(e));
             }
             DependencyObject o = (DependencyObject)e;
 
@@ -260,7 +253,7 @@ namespace System.Windows
                 }
                 else
                 {
-                    throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, o.GetType())); 
+                    throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, o.GetType())); 
                 }
             }
         }
@@ -275,10 +268,7 @@ namespace System.Windows
         [FriendAccessAllowed] // Built into Core, also used by Framework.
         internal static void OnAncestorChanged(ContentElement ce)
         {
-            if (ce == null)
-            {
-                throw new ArgumentNullException("ce");
-            }
+            ArgumentNullException.ThrowIfNull(ce);
 
 
             if (true == (bool)ce.GetValue(GetsSourceChangedEventProperty))
@@ -577,10 +567,7 @@ namespace System.Windows
         [FriendAccessAllowed] // To allow internal code paths to access this function 
         internal static PresentationSource CriticalFromVisual(DependencyObject v, bool enable2DTo3DTransition)
         {
-            if (v == null)
-            {
-                throw new ArgumentNullException("v");
-            }
+            ArgumentNullException.ThrowIfNull(v);
 
             PresentationSource source = FindSource(v, enable2DTo3DTransition);
 
@@ -743,7 +730,7 @@ namespace System.Windows
                 }
                 else
                 {
-                    throw new InvalidOperationException(SR.Get(SRID.Invalid_IInputElement, doTarget.GetType())); 
+                    throw new InvalidOperationException(SR.Format(SR.Invalid_IInputElement, doTarget.GetType())); 
                 }
 
                 calledOut = true;

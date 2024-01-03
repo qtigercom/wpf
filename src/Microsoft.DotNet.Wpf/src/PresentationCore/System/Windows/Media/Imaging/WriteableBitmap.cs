@@ -23,7 +23,6 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Composition;
 using SR=MS.Internal.PresentationCore.SR;
-using SRID=MS.Internal.PresentationCore.SRID;
 using MS.Internal.PresentationCore;                        // SecurityHelper
 using System.Threading;
 
@@ -87,13 +86,13 @@ namespace System.Windows.Media.Imaging
 
             if (pixelFormat.Palettized && palette == null)
             {
-                throw new InvalidOperationException(SR.Get(SRID.Image_IndexedPixelFormatRequiresPalette));
+                throw new InvalidOperationException(SR.Image_IndexedPixelFormatRequiresPalette);
             }
 
             if (pixelFormat.Format == PixelFormatEnum.Extended)
             {
                 // We don't support third-party pixel formats yet.
-                throw new ArgumentException(SR.Get(SRID.Effect_PixelFormat), "pixelFormat");
+                throw new ArgumentException(SR.Effect_PixelFormat, "pixelFormat");
             }
 
             if (pixelWidth < 0)
@@ -176,7 +175,7 @@ namespace System.Windows.Media.Imaging
 
             if (_lockCount == 0)
             {
-                throw new InvalidOperationException(SR.Get(SRID.Image_MustBeLocked));
+                throw new InvalidOperationException(SR.Image_MustBeLocked);
             }
 
             //
@@ -259,7 +258,7 @@ namespace System.Windows.Media.Imaging
 
             if (_lockCount == UInt32.MaxValue)
             {
-                throw new InvalidOperationException(SR.Get(SRID.Image_LockCountLimit));
+                throw new InvalidOperationException(SR.Image_LockCountLimit);
             }
 
             if (_lockCount == 0)
@@ -323,7 +322,7 @@ namespace System.Windows.Media.Imaging
 
             if (_lockCount == 0)
             {
-                throw new InvalidOperationException(SR.Get(SRID.Image_MustBeLocked));
+                throw new InvalidOperationException(SR.Image_MustBeLocked);
             }
             Invariant.Assert(_lockCount > 0, "Lock count should never be negative!");
 
@@ -411,7 +410,7 @@ namespace System.Windows.Media.Imaging
             // We accept arrays of arbitrary value types - but not reference types.
             if (elementType == null || !elementType.IsValueType)
             {
-                throw new ArgumentException(SR.Get(SRID.Image_InvalidArrayForPixel));
+                throw new ArgumentException(SR.Image_InvalidArrayForPixel);
             }
 
             // Get the address of the data in the array by pinning it.
@@ -452,15 +451,8 @@ namespace System.Windows.Media.Imaging
         {
             WritePreamble();
 
-            if (bufferSize < 1)
-            {
-                throw new ArgumentOutOfRangeException("bufferSize", SR.Get(SRID.ParameterCannotBeLessThan, 1));
-            }
-
-            if (stride < 1)
-            {
-                throw new ArgumentOutOfRangeException("stride", SR.Get(SRID.ParameterCannotBeLessThan, 1));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bufferSize);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(stride);
 
             if (sourceRect.IsEmpty || sourceRect.Width <= 0 || sourceRect.Height <= 0)
             {
@@ -519,20 +511,13 @@ namespace System.Windows.Media.Imaging
                                     out sourceBufferSize, 
                                     out elementType);
 
-            if (stride < 1)
-            {
-                throw new ArgumentOutOfRangeException("stride", SR.Get(SRID.ParameterCannotBeLessThan, 1));
-            }
-
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException("offset", SR.Get(SRID.ParameterCannotBeLessThan, 0));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(stride);
+            ArgumentOutOfRangeException.ThrowIfNegative(offset);
 
             // We accept arrays of arbitrary value types - but not reference types.
             if (elementType == null || !elementType.IsValueType)
             {
-                throw new ArgumentException(SR.Get(SRID.Image_InvalidArrayForPixel));
+                throw new ArgumentException(SR.Image_InvalidArrayForPixel);
             }
             
             checked
@@ -750,10 +735,7 @@ namespace System.Windows.Media.Imaging
             BitmapSource source
             )
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
+            ArgumentNullException.ThrowIfNull(source);
 
             if (source.PixelWidth < 0)
             {
@@ -795,12 +777,17 @@ namespace System.Windows.Media.Imaging
 
                 Lock();
 
-                Int32Rect rcFull = new Int32Rect(0, 0, _pixelWidth, _pixelHeight);
-                int bufferSize = checked(_backBufferStride.Value * source.PixelHeight);
-                source.CriticalCopyPixels(rcFull, _backBuffer, bufferSize, _backBufferStride.Value);
-                AddDirtyRect(rcFull);
-
-                Unlock();
+                try
+                {
+                    Int32Rect rcFull = new Int32Rect(0, 0, _pixelWidth, _pixelHeight);
+                    int bufferSize = checked(_backBufferStride.Value * source.PixelHeight);
+                    source.CriticalCopyPixels(rcFull, _backBuffer, bufferSize, _backBufferStride.Value);
+                    AddDirtyRect(rcFull);
+                }
+                finally
+                {
+                    Unlock();
+                }
             }
 
             EndInit();
@@ -844,22 +831,14 @@ namespace System.Windows.Media.Imaging
             //
             // Sanitize the source rect and assure it will fit within the back buffer.
             //
-            if (sourceRect.X < 0)
-            {
-                Debug.Assert(!backwardsCompat);
-                throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterCannotBeNegative));
-            }
-
-            if (sourceRect.Y < 0)
-            {
-                Debug.Assert(!backwardsCompat);
-                throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterCannotBeNegative));
-            }
+            Debug.Assert(!(backwardsCompat && (sourceRect.X < 0 || sourceRect.Y < 0)));
+            ArgumentOutOfRangeException.ThrowIfNegative(sourceRect.X, nameof(sourceRect));
+            ArgumentOutOfRangeException.ThrowIfNegative(sourceRect.Y, nameof(sourceRect));
 
             if (sourceRect.Width < 0)
             {
                 Debug.Assert(!backwardsCompat);
-                throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelWidth));
+                throw new ArgumentOutOfRangeException("sourceRect", SR.Format(SR.ParameterMustBeBetween, 0, _pixelWidth));
             }
 
             if (sourceRect.Width > _pixelWidth)
@@ -870,14 +849,14 @@ namespace System.Windows.Media.Imaging
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelWidth));
+                    throw new ArgumentOutOfRangeException("sourceRect", SR.Format(SR.ParameterMustBeBetween, 0, _pixelWidth));
                 }
             }
 
             if (sourceRect.Height < 0)
             {
                 Debug.Assert(!backwardsCompat);
-                throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelHeight));
+                throw new ArgumentOutOfRangeException("sourceRect", SR.Format(SR.ParameterMustBeBetween, 0, _pixelHeight));
             }
 
             if (sourceRect.Height > _pixelHeight)
@@ -888,22 +867,22 @@ namespace System.Windows.Media.Imaging
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelHeight));
+                    throw new ArgumentOutOfRangeException("sourceRect", SR.Format(SR.ParameterMustBeBetween, 0, _pixelHeight));
                 }
             }
 
-            if (destinationX < 0)
+            if (!backwardsCompat)
             {
-                if (backwardsCompat)
+                ArgumentOutOfRangeException.ThrowIfNegative(destinationX);
+            }
+            else
+            {
+                if (destinationX < 0)
                 {
                     HRESULT.Check((int)WinCodecErrors.WINCODEC_ERR_VALUEOVERFLOW);
                 }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("sourceRect", SR.Get(SRID.ParameterCannotBeNegative));
-                }
             }
-        
+
             if (destinationX > _pixelWidth - sourceRect.Width)
             {
                 if (backwardsCompat)
@@ -912,7 +891,7 @@ namespace System.Windows.Media.Imaging
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("destinationX", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelWidth - sourceRect.Width));
+                    throw new ArgumentOutOfRangeException("destinationX", SR.Format(SR.ParameterMustBeBetween, 0, _pixelWidth - sourceRect.Width));
                 }
             }
 
@@ -924,7 +903,7 @@ namespace System.Windows.Media.Imaging
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("destinationY", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelHeight - sourceRect.Height));
+                    throw new ArgumentOutOfRangeException("destinationY", SR.Format(SR.ParameterMustBeBetween, 0, _pixelHeight - sourceRect.Height));
                 }
             }
 
@@ -936,7 +915,7 @@ namespace System.Windows.Media.Imaging
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("destinationY", SR.Get(SRID.ParameterMustBeBetween, 0, _pixelHeight - sourceRect.Height));
+                    throw new ArgumentOutOfRangeException("destinationY", SR.Format(SR.ParameterMustBeBetween, 0, _pixelHeight - sourceRect.Height));
                 }
             }
 
@@ -953,11 +932,8 @@ namespace System.Windows.Media.Imaging
                 throw new ArgumentNullException(backwardsCompat ? "buffer" : "sourceBuffer");
             }
 
-            if (sourceBufferStride < 1)
-            {
-                Debug.Assert(!backwardsCompat);
-                throw new ArgumentOutOfRangeException("sourceBufferStride", SR.Get(SRID.ParameterCannotBeLessThan, 1));
-            }
+            Debug.Assert(!(backwardsCompat && sourceBufferStride < 1));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sourceBufferStride);
 
             if (sourceRect.Width == 0 || sourceRect.Height == 0)
             {
@@ -980,7 +956,7 @@ namespace System.Windows.Media.Imaging
                     }
                     else
                     {
-                        throw new ArgumentException(SR.Get(SRID.Image_InsufficientBufferSize), "sourceBufferSize");
+                        throw new ArgumentException(SR.Image_InsufficientBufferSize, "sourceBufferSize");
                     }
                 }
 
@@ -1013,20 +989,27 @@ namespace System.Windows.Media.Imaging
 
                     Lock();
 
-                    MILUtilities.MILCopyPixelBuffer(
-                        pDest,
-                        outputBufferSize,
-                        (uint) _backBufferStride.Value,
-                        destBufferBitOffset,
-                        pSource,
-                        inputBufferSize,
-                        (uint) sourceBufferStride,
-                        sourceBufferBitOffset,
-                        (uint) sourceRect.Height,
-                        copyWidthInBits);
-
-                    AddDirtyRect(destinationRect);
-                    Unlock();
+                    try
+                    {
+                        MILUtilities.MILCopyPixelBuffer(
+                            pDest,
+                            outputBufferSize,
+                            (uint) _backBufferStride.Value,
+                            destBufferBitOffset,
+                            pSource,
+                            inputBufferSize,
+                            (uint) sourceBufferStride,
+                            sourceBufferBitOffset,
+                            (uint) sourceRect.Height,
+                            copyWidthInBits);
+                        AddDirtyRect(destinationRect);
+                    }
+                    finally
+                    {
+                        // MILUtilities.MILCopyPixelBuffer may throw ArgumentException (e.g. for invalid stride)
+                        // See https://github.com/dotnet/wpf/issues/8134
+                        Unlock();
+                    }
                 }
             }
 
@@ -1176,7 +1159,7 @@ namespace System.Windows.Media.Imaging
                     }
                     else
                     {
-                        throw new ArgumentException(SR.Get(SRID.Image_InsufficientBuffer), "sourceBuffer");
+                        throw new ArgumentException(SR.Image_InsufficientBuffer, "sourceBuffer");
                     }
                 }
                 else
@@ -1202,7 +1185,7 @@ namespace System.Windows.Media.Imaging
                     }
                     else
                     {
-                        throw new ArgumentException(SR.Get(SRID.Image_InsufficientBuffer), "sourceBuffer");
+                        throw new ArgumentException(SR.Image_InsufficientBuffer, "sourceBuffer");
                     }
                 }
                 else
@@ -1218,7 +1201,7 @@ namespace System.Windows.Media.Imaging
             }
             else
             {
-                throw new ArgumentException(SR.Get(SRID.Collection_BadRank), backwardsCompat ? "pixels" : "sourceBuffer");
+                throw new ArgumentException(SR.Collection_BadRank, backwardsCompat ? "pixels" : "sourceBuffer");
             }
         }
 

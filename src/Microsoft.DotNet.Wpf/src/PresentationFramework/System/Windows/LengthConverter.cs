@@ -141,10 +141,7 @@ namespace System.Windows
                                          object value,
                                          Type destinationType)
         {
-            if (destinationType == null)
-            {
-                throw new ArgumentNullException("destinationType");
-            }
+            ArgumentNullException.ThrowIfNull(destinationType);
 
             if (    value != null
                 &&  value is double )
@@ -222,7 +219,7 @@ namespace System.Windows
             }
             catch (FormatException)
             {
-                throw new FormatException(SR.Get(SRID.LengthFormatError, valueString));
+                throw new FormatException(SR.Format(SR.LengthFormatError, valueString));
             }
         }
 
